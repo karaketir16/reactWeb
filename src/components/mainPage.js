@@ -23,18 +23,23 @@ class MainPage extends Component{
     (
         <Container>
             <Row>
-                <Col xs={12}>
+                <Col xs={12} className="px-0">
                     <Image src="https://via.placeholder.com/1920x300" fluid />
                 </Col>
             </Row>
             <Row>
-                <Col xs={12}>
+                <Col xs={12} className="px-0">
                     <MyNavbar />
                 </Col>
             </Row>
             <Row>
-                <Col sm={12}>
+                <Col sm={12} className="px-0">
                     <MyCarousel />
+                </Col>
+            </Row>
+            <Row>
+                <Col sm={9} className="push-left pl-0">
+                     Yazilar
                 </Col>
             </Row>
         </Container>
