@@ -23,11 +23,11 @@ class MyNavbar extends Component{
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">
-            <Nav.Link href="#hakkimizda">Hakkımızda</Nav.Link>
-            <Nav.Link href="#yazarlar">Yazarlar</Nav.Link>
-            <Nav.Link href="#sayilar">Sayılar</Nav.Link>
-            <Nav.Link href="#gundem">Gündem</Nav.Link>
-            <Nav.Link href="#sizdengelenler">Sizden Gelenler</Nav.Link>
+            <Nav.Link href="hakkimizda">Hakkımızda</Nav.Link>
+            <Nav.Link href="yazarlar">Yazarlar</Nav.Link>
+            <Nav.Link href="sayilar">Sayılar</Nav.Link>
+            <Nav.Link href="gundem">Gündem</Nav.Link>
+            <Nav.Link href="sizdengelenler">Sizden Gelenler</Nav.Link>
             
             <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>

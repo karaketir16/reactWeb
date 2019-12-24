@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Image from 'react-bootstrap/Image'
 import MyNavbar from './myNavbar'
+import Preview from './preview'
 class MainPage extends Component{
 
     constructor() 
@@ -38,8 +39,9 @@ class MainPage extends Component{
                 </Col>
             </Row>
             <Row>
-                <Col sm={9} className="push-left pl-0">
-                     Yazilar
+                <Col sm={9} className="px-0">
+                    <Preview />
+                    <Preview />
                 </Col>
             </Row>
         </Container>

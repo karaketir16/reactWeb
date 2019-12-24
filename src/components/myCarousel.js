@@ -20,7 +20,7 @@ class MyCarousel extends Component{
             <Carousel.Item>
             <img
             className="d-block w-100"
-            src="https://via.placeholder.com/800x400"
+            src="https://via.placeholder.com/1920x1080"
             alt="First slide"
             />
             <Carousel.Caption>
@@ -31,7 +31,7 @@ class MyCarousel extends Component{
             <Carousel.Item>
             <img
             className="d-block w-100"
-            src="https://via.placeholder.com/800x400"
+            src="https://via.placeholder.com/1920x1080"
             alt="Third slide"
             />
             <Carousel.Caption>
@@ -42,7 +42,7 @@ class MyCarousel extends Component{
             <Carousel.Item>
             <img
             className="d-block w-100"
-            src="https://via.placeholder.com/800x400"
+            src="https://via.placeholder.com/1920x1080"
             alt="Third slide"
             />
             <Carousel.Caption>
