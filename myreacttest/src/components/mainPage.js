@@ -7,18 +7,21 @@ import Col from 'react-bootstrap/Col'
 import Image from 'react-bootstrap/Image'
 import MyNavbar from './myNavbar'
 import Preview from './preview'
+import {connect} from "react-redux"
+import {loginAction} from "../actions"
+
 class MainPage extends Component{
 
-    constructor() 
-    {
-      super();
+    constructor(props) {
+        super(props);
       this.state = {
         newTodo: "",
         todos: [],
-        test: [<b>deneme</b>, <b>deneme</b>]
-      };
+        test: this.props.user,
+      }; 
     };
 
+      
 
     render = () => 
     (
@@ -51,4 +54,17 @@ class MainPage extends Component{
         
 }
 
-export default MainPage;
+const mapStateToProps = (state) =>
+{
+    return {user: state.user};
+};
+const mapDispatchToProps = (dispatch) =>
+{
+    return {loginAction: (user) => dispatch(loginAction(user))};
+};
+
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(MainPage);
