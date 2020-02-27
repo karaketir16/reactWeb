@@ -45,19 +45,19 @@ class Preview extends Component{
     // </Container>
     render = () => 
     (
-        <div class="card" style={{"margin": "30px 0px"}}>
-            <div class="card-body">
-                <h5 class="card-title">Nam si amitti vita beata potest, beata esse non potest</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Tarih 24 Aralık 2019</h6>
-                <img class="card-img-top" src="https://via.placeholder.com/1920x1080" alt="Card cap"/>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+        <div className="card" style={{"margin": "30px 0px"}}>
+            <div className="card-body">
+                <h5 className="card-title">Nam si amitti vita beata potest, beata esse non potest</h5>
+                <h6 className="card-subtitle mb-2 text-muted">Tarih 24 Aralık 2019</h6>
+                <img className="card-img-top" src="https://via.placeholder.com/1920x1080" alt="Card cap"/>
+                <p className="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
                 Aliter enim explicari, quod quaeritur, non potest. Quid enim est a Chrysippo 
                 praetermissum in Stoicis? Ex ea difficultate illae fallaciloquae, ut ait Accius,
                  malitiae natae sunt. Estne, quaeso, inquam, sitienti in bibendo voluptas? 
                  Quam tu ponis in verbis, ego positam in re putabam. Duo Reges: constructio 
                  interrete. Tum Torquatus: Prorsus, inquit, assentior;</p>
                 <div className="text-right"> 
-                    <a href="#link" class="btn btn-dark">Devamı ≫</a>
+                    <a href="#link" className="btn btn-dark">Devamı ≫</a>
                 </div>
             </div>
         </div>
