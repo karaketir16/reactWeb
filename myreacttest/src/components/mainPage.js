@@ -14,6 +14,9 @@ import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
 import { Editor} from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { withFirebase } from './Firebase';
+import firebase from 'firebase'
+
+
 
 
 class MainPageBase extends Component{
@@ -25,16 +28,52 @@ class MainPageBase extends Component{
         todos: [],
         test: this.props.user,
         editorState: EditorState.createEmpty(),
-        storage: this.props.firebase.storage,
       }; 
       console.log("MainPageBase Contructor");
     };
 
+    
+
     uploadCallback = (file) => {
         console.log("Hey");
-        return this.state.storage.ref().child("testFile").put(file).then(function(snapshot) {
-            console.log('Uploaded a blob or file!');
-          });
+            var storageRef = this.props.firebase.storage.ref();
+            return new Promise((resolve, reject) => {
+
+                var uploadTask = storageRef.child('images/rivers.png').put(file);
+
+                // Register three observers:
+                // 1. 'state_changed' observer, called any time the state changes
+                // 2. Error observer, called on failure
+                // 3. Completion observer, called on successful completion
+                uploadTask.on('state_changed', function(snapshot){
+                  // Observe state change events such as progress, pause, and resume
+                  // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                  var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                  console.log('Upload is ' + progress + '% done');
+                  switch (snapshot.state) {
+                    case firebase.storage.TaskState.PAUSED: // or 'paused'
+                      console.log('Upload is paused');
+                      break;
+                    case firebase.storage.TaskState.RUNNING: // or 'running'
+                      console.log('Upload is running');
+                      break;
+                  }
+                }, function(error) {
+                  console.log("err", error);
+                  reject(error.toString());
+                }, function() {
+                  // Handle successful uploads on complete
+                  // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                  uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                      
+                    console.log('File available at', downloadURL);
+                    resolve({data: {link: downloadURL}});
+                  });
+                });
+            });
+         
+
+
         // const formData = new FormData();
         // formData.append('file', file);
         // return new Promise((resolve, reject) => {
@@ -57,8 +96,8 @@ class MainPageBase extends Component{
     onEditorStateChange = (editorState) =>
     {
         this.setState({
-            editorState
-        })
+            editorState,
+        });
     };
 
     loginButton = () =>
@@ -107,15 +146,16 @@ class MainPageBase extends Component{
                 </Col>
             </Row>
             <Row>
-            <Editor editorState={this.editorState}
-wrapperClassName="wrapper-class"
-editorClassName="editor-class"
-toolbarClassName="toolbar-class"
-wrapperStyle={{ border: "2px solid green", marginBottom: "20px" }}
-editorStyle={{ height: "300px", padding: "10px"}}
-toolbar={{ image: { uploadCallback: this.uploadCallback }}}
-onChange={this.onEditorStateChange}>
-                </Editor>
+            <Editor 
+                editorState={this.state.editorState}
+                wrapperClassName="wrapper-class"
+                editorClassName="editor-class"
+                toolbarClassName="toolbar-class"
+                wrapperStyle={{ border: "2px solid green", marginBottom: "20px" }}
+                editorStyle={{ height: "300px", padding: "10px"}}
+                toolbar={{ image: { uploadCallback: this.uploadCallback , previewImage:true}}}
+                onEditorStateChange={this.onEditorStateChange}
+            />
             </Row>
             <Row>
                 <Button onClick={this.loginButton}> Deneme </Button>
