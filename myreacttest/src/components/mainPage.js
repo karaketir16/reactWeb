@@ -17,7 +17,14 @@ import { withFirebase } from './Firebase';
 import firebase from 'firebase'
 
 
+import CKEditor from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+// import Base64UploadAdapter from '@ckeditor/ckeditor5-upload/src/adapters/base64uploadadapter';
 
+
+// const editorConfiguration = {
+//     plugins: [ Base64UploadAdapter],
+// };
 
 class MainPageBase extends Component{
 
@@ -146,20 +153,31 @@ class MainPageBase extends Component{
                 </Col>
             </Row>
             <Row>
-            <Editor 
-                editorState={this.state.editorState}
-                wrapperClassName="wrapper-class"
-                editorClassName="editor-class"
-                toolbarClassName="toolbar-class"
-                wrapperStyle={{ border: "2px solid green", marginBottom: "20px" }}
-                editorStyle={{ height: "300px", padding: "10px"}}
-                toolbar={{ image: { uploadCallback: this.uploadCallback , previewImage:true}}}
-                onEditorStateChange={this.onEditorStateChange}
-            />
+
             </Row>
             <Row>
                 <Button onClick={this.loginButton}> Deneme </Button>
             </Row>
+            <h2>Using CKEditor 5 build in React</h2>
+                <CKEditor
+                    editor={ ClassicEditor }
+                    // config={ editorConfiguration }
+                    data="<p>Hello from CKEditor 5!</p>"
+                    onInit={ editor => {
+                        // You can store the "editor" and use when it is needed.
+                        console.log( 'Editor is ready to use!', editor );
+                    } }
+                    onChange={ ( event, editor ) => {
+                        const data = editor.getData();
+                        console.log( { event, editor, data } );
+                    } }
+                    onBlur={ ( event, editor ) => {
+                        console.log( 'Blur.', editor );
+                    } }
+                    onFocus={ ( event, editor ) => {
+                        console.log( 'Focus.', editor );
+                    } }
+                />
         </Container>
 
     );
