@@ -16,15 +16,11 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { withFirebase } from './Firebase';
 import firebase from 'firebase'
 
+import './ckeditor.css'
 
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-// import Base64UploadAdapter from '@ckeditor/ckeditor5-upload/src/adapters/base64uploadadapter';
 
-
-// const editorConfiguration = {
-//     plugins: [ Base64UploadAdapter],
-// };
 
 class MainPageBase extends Component{
 
@@ -160,16 +156,36 @@ class MainPageBase extends Component{
             </Row>
             <h2>Using CKEditor 5 build in React</h2>
                 <CKEditor
+
                     editor={ ClassicEditor }
-                    // config={ editorConfiguration }
-                    data="<p>Hello from CKEditor 5!</p>"
+
                     onInit={ editor => {
                         // You can store the "editor" and use when it is needed.
+                        editor.setData("<p>------</p><p>Yazi</p><p>------</p>");
                         console.log( 'Editor is ready to use!', editor );
                     } }
-                    onChange={ ( event, editor ) => {
-                        const data = editor.getData();
-                        console.log( { event, editor, data } );
+                    onChange={ async ( event, editor ) => {
+                        var data = editor.getData();
+                        if(data.length < 26)
+                        {
+                            console.log("data1: ", data);
+                            await editor.setData("<p>------</p>Cizgilerin Arasina Yaziyi Yazin<p>------</p>");
+                            data = "<p>------</p><p>------</p>";
+                            return;
+                        }
+                        if(data.slice(Math.max(data.length - 13, 0)) != "<p>------</p>")
+                        {
+                            console.log("data2: ", data);
+                            await editor.setData(data + "<p>------</p>");
+                            data = data + "<p>------</p>";
+                        }
+                        if(data.slice(0, 13) != "<p>------</p>")
+                        {
+                            console.log("data3: ", data);
+                            await editor.setData("<p>------</p>" + data);
+                            data = "<p>------</p>" + data;
+                        }
+                        console.log( data.slice(0, 13) );
                     } }
                     onBlur={ ( event, editor ) => {
                         console.log( 'Blur.', editor );
