@@ -1,6 +1,7 @@
 import app from 'firebase/app';
 import 'firebase/auth';
-import 'firebase/storage'
+import 'firebase/storage';
+import 'firebase/database';
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -14,7 +15,7 @@ const config = {
 class Firebase {
   constructor() {
     app.initializeApp(config);
-
+    this.app = app;
     this.provider = new app.auth.GoogleAuthProvider();
     this.auth = app.auth();
     this.storage = app.storage();

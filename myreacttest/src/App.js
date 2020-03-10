@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Route} from "react-router-dom"
 import logo from './logo.svg';
 import './App.css';
 import MainPage from './components/mainPage';
+import AdminPanel from './components/adminPanel';
 
 
 const config = {
@@ -31,7 +32,7 @@ class App extends Component{
 
     <Router>
       <Route path='/' exact component={MainPage}/>
-      <Route path='/test' component={MainPage}/>
+      <Route path='/test' component={AdminPanel}/>
     </Router>
 
   );
