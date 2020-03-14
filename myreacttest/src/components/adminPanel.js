@@ -36,24 +36,70 @@ class AdminPanelBase extends Component{
         newTodo: "",
         todos: [],
         test: this.props.user,
-        editorState: EditorState.createEmpty(),
       }; 
       console.log("AdminPanelBase Contructor");
     };
     
-    onEditorStateChange = (editorState) =>
-    {
-        this.setState({
-            editorState,
-        });
+    // A handler executed when the user types or modifies the editor content.
+    // It updates the state of the application.
+    handleEditorDataChange = ( evt, editor ) =>{
+        this.setState( {
+            editorData: editor.getData()
+        } );
     };
 
+    // A handler executed when the editor has been initialized and is ready.
+    // It synchronizes the initial data state and saves the reference to the editor instance.
+    handleEditorInit = ( editor ) => {
+        this.editor = editor;
+
+        this.setState( {
+            editorData: editor.getData()
+        } );
+    };
+
+    submit = (event) =>
+    {
+        // A post entry.
+        var postData = {
+            author: "username",
+            uid: "uid",
+            body: this.state.editorData,
+            title: "title",
+            starCount: 0,
+            authorPic: "picture"
+        };
+        
+        // Get a key for a new Post.
+        var newPostKey = firebase.database().ref().child('posts').push().set(postData, (error => {
+            if (error) {
+                alert("Data could not be saved." + error);
+              } else {
+                alert("Data saved successfully.");
+              }
+        }));
+    };
 
 
     render = () => 
     (
         <Container>
-            
+            <Col>
+            <CKEditor
+                editor={ ClassicEditor }
+
+                onInit={ this.handleEditorInit}
+                
+                onChange={this.handleEditorDataChange }
+                onBlur={ ( event, editor ) => {
+                    console.log( 'Blur.', editor );
+                } }
+                onFocus={ ( event, editor ) => {
+                    console.log( 'Focus.', editor );
+                } }
+                />
+                </Col>
+                <Button onClick={this.submit}>Submit</Button>
         </Container>
 
     );
