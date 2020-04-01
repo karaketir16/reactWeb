@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {BrowserRouter as Router, Route} from "react-router-dom"
+import {BrowserRouter as Router, Route, Redirect} from "react-router-dom"
 import MyCarousel from "./myCarousel"
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
@@ -15,9 +15,9 @@ import { Editor} from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { withFirebase } from './Firebase';
 import firebase from 'firebase'
-
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-
+import { MDBInput } from "mdbreact";
+import Select from "react-select";
 
 
 import './ckeditor.css'
@@ -28,7 +28,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 
 
-class AdminPanelBase extends Component{
+class NewArticleBase extends Component{
 
     constructor(props) {
         super(props);
@@ -37,6 +37,13 @@ class AdminPanelBase extends Component{
         todos: [],
         test: this.props.user,
         submitText: "Gonder",
+        selectOptions : [
+            { value: 'chocolate', label: 'Chocolate' },
+            { value: 'strawberry', label: 'Strawberry' },
+            { value: 'vanilla', label: 'Vanilla' },
+          ],
+        selectedOption: null,
+        redirect: false,
       }; 
       console.log("AdminPanelBase Contructor");
     };
@@ -59,6 +66,14 @@ class AdminPanelBase extends Component{
         } );
     };
 
+    headerChange = (event) =>
+    {
+        this.setState({header: event.target.value});
+    };
+    selectionChange = (selectedOption) =>
+    {
+        this.setState({selectedOption});
+    };
     submit = (event) =>
     {
         this.setState({
@@ -84,33 +99,54 @@ class AdminPanelBase extends Component{
                 });
               } else {
                 alert("Basariyla Kaydedildi.");
+                this.setState({redirect: true});
               }
         }));
     };
 
 
-    render = () => 
-    (
+    render = () => {
+        if(this.state.redirect)
+        {
+            return (<Redirect to="/admin"/>);
+        }
+        else 
+            return     (
         <Container>
-            <Col>
-            <CKEditor
-                editor={ ClassicEditor }
-
-                onInit={ this.handleEditorInit}
-                
-                onChange={this.handleEditorDataChange }
-                onBlur={ ( event, editor ) => {
-                    console.log( 'Blur.', editor );
-                } }
-                onFocus={ ( event, editor ) => {
-                    console.log( 'Focus.', editor );
-                } }
+            <Row>
+                <Col xm={9}>
+                <MDBInput label="Yazinin Basligi" onChange={this.headerChange}/>
+                </Col>
+                <Col xm ={3} style={{"padding-top":"30px"}}>
+                <Select
+                    value={this.state.selectedOption}
+                    onChange={this.selectionChange}
+                    options={this.state.selectOptions}
+                    placeholder={"Yazar Secin"}
                 />
                 </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <CKEditor
+                        editor={ ClassicEditor }
+
+                        onInit={ this.handleEditorInit}
+                        
+                        onChange={this.handleEditorDataChange }
+                        onBlur={ ( event, editor ) => {
+                            console.log( 'Blur.', editor );
+                        } }
+                        onFocus={ ( event, editor ) => {
+                            console.log( 'Focus.', editor );
+                        } }
+                        />
+                </Col>
+            </Row>
             <Button onClick={this.submit}>{this.state.submitText}</Button>
         </Container>
 
-    );
+    )};
         
 };
 
@@ -123,12 +159,12 @@ const mapDispatchToProps = (dispatch) =>
     return {loginAction: (user) => dispatch(loginAction(user))};
 };
 
-const AdminPanel = withFirebase(AdminPanelBase);
+const NewArticle = withFirebase(NewArticleBase);
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-  )(AdminPanel);
+  )(NewArticle);
 
 
 

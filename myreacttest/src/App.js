@@ -4,7 +4,7 @@ import logo from './logo.svg';
 import './App.css';
 import MainPage from './components/mainPage';
 import AdminPanel from './components/adminPanel';
-
+import NewArticle from './components/newArticle';
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -32,7 +32,8 @@ class App extends Component{
 
     <Router>
       <Route path='/' exact component={MainPage}/>
-      <Route path='/test' component={AdminPanel}/>
+      <Route path='/admin' component={AdminPanel}/>
+      <Route path='/yeni-yazi' component={NewArticle}/>
     </Router>
 
   );
