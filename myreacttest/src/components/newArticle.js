@@ -90,7 +90,7 @@ class NewArticleBase extends Component{
         };
         
         // Get a key for a new Post.
-        var newPostKey = firebase.database().ref().child('posts').push();
+        var newPostKey = this.props.firebase.database.ref().child('posts').push();
         newPostKey.set(postData, (error => {
             if (error) {
                 alert("Bir Sorun Olustu " + error);

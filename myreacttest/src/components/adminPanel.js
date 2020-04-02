@@ -17,6 +17,7 @@ import { withFirebase } from './Firebase';
 import firebase from 'firebase'
 
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+import {MDBInput, MDBListGroup, MDBListGroupItem, MDBContainer, MDBBadge } from "mdbreact";
 
 
 
@@ -32,84 +33,78 @@ class AdminPanelBase extends Component{
 
     constructor(props) {
         super(props);
-      this.state = {
-        newTodo: "",
-        todos: [],
-        test: this.props.user,
-        submitText: "Gonder",
-      }; 
-      console.log("AdminPanelBase Contructor");
-    };
-    
-    // A handler executed when the user types or modifies the editor content.
-    // It updates the state of the application.
-    handleEditorDataChange = ( evt, editor ) =>{
-        this.setState( {
-            editorData: editor.getData()
-        } );
-    };
-
-    // A handler executed when the editor has been initialized and is ready.
-    // It synchronizes the initial data state and saves the reference to the editor instance.
-    handleEditorInit = ( editor ) => {
-        this.editor = editor;
-
-        this.setState( {
-            editorData: editor.getData()
-        } );
+        this.state = {
+                writerList: ["Falan", "Filan"],
+                newWriter: "",
+        }; 
+        var writersRef = this.props.firebase.database.ref('writers');
+        writersRef.on('value', snapshot => {
+            console.log("LOG: ", snapshot.val());
+            let tmp = [];
+            for(const writer in snapshot.val())
+            {
+                tmp.push(snapshot.val()[writer]["name"]);
+            }
+            // console.log("TMP: ", tmp);
+            this.setState({writerList: tmp});
+        });
     };
 
-    submit = (event) =>
+    removeWriter = (writer) => 
     {
-        this.setState({
-            submitText: "Yukleniyor...",
-        })
-        // A post entry.
-        var postData = {
-            author: "username",
-            uid: "uid",
-            body: this.state.editorData,
-            title: "title",
-            starCount: 0,
-            authorPic: "picture"
-        };
-        
-        // Get a key for a new Post.
-        var newPostKey = firebase.database().ref().child('posts').push();
-        newPostKey.set(postData, (error => {
-            if (error) {
-                alert("Bir Sorun Olustu " + error);
-                this.setState({
-                    submitText: "Gonder",
-                });
-              } else {
-                alert("Basariyla Kaydedildi.");
-              }
-        }));
+        console.log("Writer: ", writer);
     };
+    addWriter = () =>
+    {
+        let name = this.state.newWriter;
+        // return this.props.firebase.database.ref('writers').once('value').then(function(snapshot) {
+        //     let existingWriters = snapshot.val();
 
+        // // ...
+        // });
+        var newPostKey = this.props.firebase.database.ref().child('writers').push().key;
+        this.props.firebase.database.ref('writers/' + newPostKey).set({"name": name},
+            function(error) {
+                if (error) {
+                    alert("Bir Sorun Olustu " + error);
+                    // this.setState({
+                    //     submitText: "Gonder",
+                    // });
+                  } else {
+                    alert("Basariyla Kaydedildi.");
+                    // this.setState({redirect: true});
+                  }
+              }
+        );
+    };
 
     render = () => 
     (
         <Container>
-            <Col>
-            <CKEditor
-                editor={ ClassicEditor }
-
-                onInit={ this.handleEditorInit}
-                
-                onChange={this.handleEditorDataChange }
-                onBlur={ ( event, editor ) => {
-                    console.log( 'Blur.', editor );
-                } }
-                onFocus={ ( event, editor ) => {
-                    console.log( 'Focus.', editor );
-                } }
-                />
+            <Row>
+                <Col sm={6}>
                 </Col>
-            <Button onClick={this.submit}>{this.state.submitText}</Button>
+                <Col>
+                <h3>Yazar Listesi</h3>
+                <MDBListGroup >
+                    {this.state.writerList.map(item => 
+                            <MDBListGroupItem 
+                                style={{ height: "3rem" }} 
+                                className="d-flex justify-content-between align-items-center">
+                                {item} <Button onClick={() => this.removeWriter(item)}>Yazari Kaldir</Button>
+                            </MDBListGroupItem>)}
+                </MDBListGroup>
+                <Row>
+                    <Col sm={9}>
+                        <MDBInput label="Yeni Yazar" onChange={event => this.setState({newWriter: event.target.value})}/>
+                    </Col>
+                    <Col>
+                        <Button onClick={this.addWriter}>Ekle</Button>
+                    </Col>
+                </Row>
+                </Col>
+            </Row>
         </Container>
-
     );
         
 };

@@ -19,7 +19,7 @@ class Firebase {
     this.provider = new app.auth.GoogleAuthProvider();
     this.auth = app.auth();
     this.storage = app.storage();
-    this.firebase = app.database();
+    this.database = app.database();
   }
 
   // *** Auth API ***
