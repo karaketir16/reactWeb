@@ -18,7 +18,7 @@ import firebase from 'firebase'
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import { MDBInput } from "mdbreact";
 import Select from "react-select";
-
+import slugify from "slugify"
 
 import './ckeditor.css'
 
@@ -37,15 +37,26 @@ class NewArticleBase extends Component{
         todos: [],
         test: this.props.user,
         submitText: "Gonder",
-        selectOptions : [
+        header: "",
+        writerList : [
             { value: 'chocolate', label: 'Chocolate' },
             { value: 'strawberry', label: 'Strawberry' },
             { value: 'vanilla', label: 'Vanilla' },
           ],
-        selectedOption: null,
+        selectedWriter: null,
         redirect: false,
       }; 
-      console.log("AdminPanelBase Contructor");
+
+      var writersRef = this.props.firebase.database.ref('writers');
+      writersRef.on('value', snapshot => {
+          let tmp = [];
+          for(const writer in snapshot.val())
+          {
+              let key = snapshot.val()[writer]["name"];
+              tmp.push({value: key, label: key});
+          }
+          this.setState({writerList: tmp});
+      });
     };
     
     // A handler executed when the user types or modifies the editor content.
@@ -70,28 +81,25 @@ class NewArticleBase extends Component{
     {
         this.setState({header: event.target.value});
     };
-    selectionChange = (selectedOption) =>
+    selectionChange = (selectedWriter) =>
     {
-        this.setState({selectedOption});
+        this.setState({selectedWriter});
     };
     submit = (event) =>
     {
         this.setState({
             submitText: "Yukleniyor...",
         })
+        let uid = slugify(this.state.header);
         // A post entry.
         var postData = {
-            author: "username",
-            uid: "uid",
+            author: this.state.selectedWriter.value,
             body: this.state.editorData,
-            title: "title",
-            starCount: 0,
-            authorPic: "picture"
+            title: this.state.header,
         };
         
         // Get a key for a new Post.
-        var newPostKey = this.props.firebase.database.ref().child('posts').push();
-        newPostKey.set(postData, (error => {
+        this.props.firebase.database.ref('posts/secrets/' + uid).set(postData, (error => {
             if (error) {
                 alert("Bir Sorun Olustu " + error);
                 this.setState({
@@ -119,15 +127,15 @@ class NewArticleBase extends Component{
                 </Col>
                 <Col xm ={3} style={{"padding-top":"30px"}}>
                 <Select
-                    value={this.state.selectedOption}
+                    value={this.state.selectedWriter}
                     onChange={this.selectionChange}
-                    options={this.state.selectOptions}
+                    options={this.state.writerList}
                     placeholder={"Yazar Secin"}
                 />
                 </Col>
             </Row>
             <Row>
-                <Col>
+                <Col sm={9}>
                     <CKEditor
                         editor={ ClassicEditor }
 

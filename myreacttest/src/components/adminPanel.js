@@ -36,43 +36,72 @@ class AdminPanelBase extends Component{
         this.state = {
                 writerList: ["Falan", "Filan"],
                 newWriter: "",
+                addWriterButtonText: "Ekle",
         }; 
         var writersRef = this.props.firebase.database.ref('writers');
         writersRef.on('value', snapshot => {
-            console.log("LOG: ", snapshot.val());
             let tmp = [];
             for(const writer in snapshot.val())
             {
                 tmp.push(snapshot.val()[writer]["name"]);
             }
-            // console.log("TMP: ", tmp);
             this.setState({writerList: tmp});
         });
     };
 
     removeWriter = (writer) => 
     {
+        this.props.firebase.database.ref('writers').orderByChild('name').equalTo(writer).once('value').then(
+            snapshot => {
+               if(snapshot)
+               {
+                snapshot.forEach(element => {
+                    this.props.firebase.database.ref('writers/'+ element.key).remove(
+                        err =>
+                        {
+                            if(err)
+                            {
+                                alert("Bir hata olustu");
+                            }
+                            else
+                            {
+                                alert("Yazar silindi");
+                            }
+                        });
+                   });
+               } 
+               else
+               {
+                   alert("Bir hata olustu");
+               }
+            }
+        );
         console.log("Writer: ", writer);
     };
     addWriter = () =>
     {
         let name = this.state.newWriter;
-        // return this.props.firebase.database.ref('writers').once('value').then(function(snapshot) {
-        //     let existingWriters = snapshot.val();
-
-        // // ...
-        // });
+        if(this.state.writerList.map(x => x.toLowerCase()).includes(name.toLocaleLowerCase()))
+        {
+            alert("Ayni isme sahip yazar mevcut");
+            return;
+        }
+        this.setState({
+            addWriterButtonText: "Ekleniyor",
+        });
         var newPostKey = this.props.firebase.database.ref().child('writers').push().key;
         this.props.firebase.database.ref('writers/' + newPostKey).set({"name": name},
-            function(error) {
+            error => {
                 if (error) {
                     alert("Bir Sorun Olustu " + error);
-                    // this.setState({
-                    //     submitText: "Gonder",
-                    // });
+                    this.setState({
+                        addWriterButtonText: "Ekle",
+                    });
                   } else {
-                    alert("Basariyla Kaydedildi.");
-                    // this.setState({redirect: true});
+                    alert("Basariyla Eklendi.");
+                    this.setState({
+                        addWriterButtonText: "Ekle",
+                    });
                   }
               }
         );
@@ -99,7 +128,7 @@ class AdminPanelBase extends Component{
                         <MDBInput label="Yeni Yazar" onChange={event => this.setState({newWriter: event.target.value})}/>
                     </Col>
                     <Col>
-                        <Button onClick={this.addWriter}>Ekle</Button>
+                        <Button onClick={this.addWriter}>{this.state.addWriterButtonText}</Button>
                     </Col>
                 </Row>
                 </Col>
