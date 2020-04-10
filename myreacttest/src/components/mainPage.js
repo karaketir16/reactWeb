@@ -23,6 +23,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
+import LoginComp from "./loginComp";
 
 class MainPageBase extends Component{
 
@@ -89,16 +90,7 @@ class MainPageBase extends Component{
                     <Preview />
                 </Col>
                 <Col>
-                {
-                    this.state.user 
-                    ?
-                    <Container>{this.state.user.displayName}
-                    <Button onClick={() => this.props.firebase.auth.signOut()}> signout </Button>
-                    </Container>
-                    : 
-                    <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={this.props.firebase.auth}/>
-                     
-                }
+                    <LoginComp/>
                 </Col>
             </Row>
             <Row>
@@ -106,26 +98,6 @@ class MainPageBase extends Component{
             </Row>
             <Row>
             </Row>
-            <h2>Using CKEditor 5 build in React</h2>
-                <CKEditor
-
-                    editor={ ClassicEditor }
-
-                    onInit={ editor => {
-                        // You can store the "editor" and use when it is needed.
-                        editor.setData("<p>------</p><p>Yazi</p><p>------</p>");
-                        console.log( 'Editor is ready to use!', editor );
-                    } }
-                    onChange={ async ( event, editor ) => {
-
-                    } }
-                    onBlur={ ( event, editor ) => {
-                        console.log( 'Blur.', editor );
-                    } }
-                    onFocus={ ( event, editor ) => {
-                        console.log( 'Focus.', editor );
-                    } }
-                />
         </Container>
 
     );
