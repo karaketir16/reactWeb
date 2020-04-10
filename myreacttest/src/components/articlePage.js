@@ -16,15 +16,14 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { withFirebase } from './Firebase';
 import firebase from 'firebase'
 
-import './ckeditor.css';
-
 import './article.css';
-
-import CKEditor from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import LoginComp from "./loginComp";
+
+
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+
 
 class ArticlePageBase extends Component{
 

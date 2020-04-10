@@ -21,14 +21,6 @@ import {MDBInput, MDBListGroup, MDBListGroupItem, MDBContainer, MDBBadge } from 
 
 
 
-import './ckeditor.css'
-
-import CKEditor from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-
-
-
-
 class AdminPanelBase extends Component{
 
     constructor(props) {

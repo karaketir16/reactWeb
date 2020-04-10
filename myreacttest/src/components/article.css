@@ -1,6 +1,12 @@
 img {
     max-width: 100%;
 }
-.image {
+
+figure {
+    max-width: 100%;
     text-align: center;
+}
+
+iframe {
+    max-width: 100%;
 }

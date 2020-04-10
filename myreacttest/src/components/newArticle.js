@@ -20,11 +20,6 @@ import { MDBInput } from "mdbreact";
 import Select from "react-select";
 import slugify from "slugify"
 
-import './ckeditor.css'
-
-import CKEditor from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-
 import SunEditor,{buttonList} from "suneditor-react";
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 
@@ -63,9 +58,9 @@ class NewArticleBase extends Component{
     
     // A handler executed when the user types or modifies the editor content.
     // It updates the state of the application.
-    handleEditorDataChange = ( evt, editor ) =>{
+    handleEditorDataChange = ( context ) => {
         this.setState( {
-            editorData: editor.getData()
+            editorData: context
         } );
     };
 
@@ -139,6 +134,18 @@ class NewArticleBase extends Component{
                 <Col xm={9}>
                 <MDBInput label="Yazinin Basligi" onChange={this.headerChange}/>
                 </Col>
+
+            </Row>
+            <Row>
+                <Col sm={9}>
+                <SunEditor setOptions={{
+                        height: 800,
+                        buttonList: buttonList.complex // Or Array of button list, eg. [['font', 'align'], ['image']]
+                        // Other option
+                    }}
+                    onChange={this.handleEditorDataChange} 
+                    />
+                </Col>
                 <Col xm ={3} style={{"padding-top":"30px"}}>
                 <Select
                     value={this.state.selectedWriter}
@@ -146,23 +153,6 @@ class NewArticleBase extends Component{
                     options={this.state.writerList}
                     placeholder={"Yazar Secin"}
                 />
-                </Col>
-            </Row>
-            <Row>
-                <Col sm={9}>
-                    <CKEditor
-                        editor={ ClassicEditor }
-
-                        onInit={ this.handleEditorInit}
-                        
-                        onChange={this.handleEditorDataChange }
-                        onBlur={ ( event, editor ) => {
-                            console.log( 'Blur.', editor );
-                        } }
-                        onFocus={ ( event, editor ) => {
-                            console.log( 'Focus.', editor );
-                        } }
-                        />
                 </Col>
             </Row>
             <Button onClick={this.submit}>{this.state.submitText}</Button>
