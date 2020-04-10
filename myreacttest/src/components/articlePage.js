@@ -16,36 +16,45 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { withFirebase } from './Firebase';
 import firebase from 'firebase'
 
-import './ckeditor.css'
+import './ckeditor.css';
+
+import './article.css';
 
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-
+import LoginComp from "./loginComp";
 
 class ArticlePageBase extends Component{
 
     constructor(props) {
         super(props);
-      this.state = {
-        newTodo: "",
-        todos: [],
-        user: this.props.user,
-        editorState: EditorState.createEmpty(),
-        articleName: this.props.match.params.articleName,
-      }; 
-      this.props.firebase.auth.onAuthStateChanged((user) => {
-          this.setState(
-              {user: user}
-          );
-          this.props.loginAction(user)
-          console.log("uuuser:", user);
-      });
-      console.log("MainPageBase Contructor");
-    };
+        this.state = {
+            user: this.props.user,
+            articleName: this.props.match.params.articleName,
+            articleBody: "Yukleniyor...",
+            articleAuthor: "Yukleniyor...",
+        }; 
+        this.props.firebase.auth.onAuthStateChanged((user) => {
+            this.setState(
+                {user: user}
+            );
+            this.props.loginAction(user)
+        });
 
-    
+        var articleRef = this.props.firebase.database.ref('posts/opens/' + this.state.articleName);
+        articleRef.on('value', snapshot => {
+            if(snapshot.val())
+            {
+                this.setState({articleBody:snapshot.val().body,
+                                articleAuthor: snapshot.val().author});
+            }
+            else{
+                this.setState({articleBody:"Yazi Bulunamadi"});
+            }
+            });
+        };
 
     onEditorStateChange = (editorState) =>
     {
@@ -82,19 +91,18 @@ class ArticlePageBase extends Component{
             </Row>
             <Row>
                 <Col sm={9} className="px-0">
-                    {this.state.articleName}
+                    <Col className="card" style={{"margin": "30px 0px"}}>
+                        <Col className="card-body">
+                            <h5 className="card-title">Nam si amitti vita beata potest, beata esse non potest</h5>
+                            <h6 className="card-subtitle mb-2 text-muted">Tarih: 24 Aralık 2019</h6>
+                            <h6 className="card-subtitle mb-2 text-muted">Yazar: {this.state.articleAuthor}</h6>
+                            <img className="card-img-top" src="https://via.placeholder.com/1920x1080" alt="Card cap"/>
+                            <div className="editor" dangerouslySetInnerHTML={{__html: this.state.articleBody}}/>
+                        </Col>
+                    </Col>
                 </Col>
                 <Col>
-                {
-                    this.state.user 
-                    ?
-                    <Container>{this.state.user.displayName}
-                    <Button onClick={() => this.props.firebase.auth.signOut()}> signout </Button>
-                    </Container>
-                    : 
-                    <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={this.props.firebase.auth}/>
-                     
-                }
+                    <LoginComp/>
                 </Col>
             </Row>
             <Row>
@@ -123,31 +131,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
   )(ArticlePage);
-
-
-
-
-
-// onChange={ async ( event, editor ) => {
-//     var data = editor.getData();
-//     if(data.length < 26)
-//     {
-//         console.log("data1: ", data);
-//         await editor.setData("<p>------</p>Cizgilerin Arasina Yaziyi Yazin<p>------</p>");
-//         data = "<p>------</p><p>------</p>";
-//         return;
-//     }
-//     if(data.slice(Math.max(data.length - 13, 0)) != "<p>------</p>")
-//     {
-//         console.log("data2: ", data);
-//         await editor.setData(data + "<p>------</p>");
-//         data = data + "<p>------</p>";
-//     }
-//     if(data.slice(0, 13) != "<p>------</p>")
-//     {
-//         console.log("data3: ", data);
-//         await editor.setData("<p>------</p>" + data);
-//         data = "<p>------</p>" + data;
-//     }
-//     console.log( data.slice(0, 13) );
-// } }

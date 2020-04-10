@@ -6,6 +6,7 @@ import MainPage from './components/mainPage';
 import AdminPanel from './components/adminPanel';
 import NewArticle from './components/newArticle';
 import ArticlePage from './components/articlePage';
+import newEditor from './components/newEditor';
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -36,6 +37,7 @@ class App extends Component{
       <Route path='/admin' component={AdminPanel}/>
       <Route path='/yeni-yazi' component={NewArticle}/>
       <Route path='/yazilar/:articleName' component={ArticlePage}/>
+      <Route path='/test' component={newEditor}/>
     </Router>
 
   );

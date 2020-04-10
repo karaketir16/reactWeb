@@ -57,7 +57,7 @@ class Preview extends Component{
                  Quam tu ponis in verbis, ego positam in re putabam. Duo Reges: constructio 
                  interrete. Tum Torquatus: Prorsus, inquit, assentior;</p>
                 <div className="text-right"> 
-                    <a href="#link" className="btn btn-dark">Devamı ≫</a>
+                    <a href="#link" className="btn btn-dark">Yaziyi Oku ≫</a>
                 </div>
             </div>
         </div>

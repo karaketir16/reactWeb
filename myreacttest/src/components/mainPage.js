@@ -30,42 +30,16 @@ class MainPageBase extends Component{
     constructor(props) {
         super(props);
       this.state = {
-        newTodo: "",
-        todos: [],
         user: this.props.user,
-        editorState: EditorState.createEmpty(),
       }; 
       this.props.firebase.auth.onAuthStateChanged((user) => {
           this.setState(
               {user: user}
           );
           this.props.loginAction(user)
-          console.log("uuuser:", user);
       });
-
-      console.log("MainPageBase Contructor");
     };
-
-    onEditorStateChange = (editorState) =>
-    {
-        this.setState({
-            editorState,
-        });
-    };
-    uiConfig = {
-        // Popup signin flow rather than redirect flow.
-        signInFlow: 'popup',
-        // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
-        signInSuccessUrl: '/signedIn',
-        // We will display Google and Facebook as auth providers.
-        signInOptions: [
-            this.props.firebase.app.auth.GoogleAuthProvider.PROVIDER_ID,
-            this.props.firebase.app.auth.FacebookAuthProvider.PROVIDER_ID,
-            this.props.firebase.app.auth.TwitterAuthProvider.PROVIDER_ID,
-            this.props.firebase.app.auth.GithubAuthProvider.PROVIDER_ID
-        ]
-      };
-
+    
     render = () => 
     (
         <Container>

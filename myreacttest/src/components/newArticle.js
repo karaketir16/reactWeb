@@ -25,6 +25,8 @@ import './ckeditor.css'
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
+import SunEditor,{buttonList} from "suneditor-react";
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 
 
 
@@ -100,6 +102,18 @@ class NewArticleBase extends Component{
         
         // Get a key for a new Post.
         this.props.firebase.database.ref('posts/secrets/' + uid).set(postData, (error => {
+            if (error) {
+                alert("Bir Sorun Olustu " + error);
+                this.setState({
+                    submitText: "Gonder",
+                });
+              } else {
+                alert("Basariyla Kaydedildi.");
+                this.setState({redirect: true});
+              }
+        }));
+
+        this.props.firebase.database.ref('posts/opens/' + uid).set(postData, (error => {
             if (error) {
                 alert("Bir Sorun Olustu " + error);
                 this.setState({
