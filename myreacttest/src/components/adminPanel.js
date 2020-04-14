@@ -27,6 +27,7 @@ class AdminPanelBase extends Component{
         super(props);
         this.state = {
                 writerList: ["Falan", "Filan"],
+                articleList: [{title: "Falan", status:"secret"},{title: "Filan", status:"open"} ],
                 newWriter: "",
                 addWriterButtonText: "Ekle",
         }; 
@@ -38,6 +39,15 @@ class AdminPanelBase extends Component{
                 tmp.push(snapshot.val()[writer]["name"]);
             }
             this.setState({writerList: tmp});
+        });
+        var articleListRef = this.props.firebase.database.ref('posts/list');
+        articleListRef.on('value', snapshot => {
+            let tmp = [];
+            for(const article in snapshot.val())
+            {
+                tmp.push(snapshot.val()[article]);
+            }
+            this.setState({articleList: tmp});
         });
     };
 
@@ -99,11 +109,74 @@ class AdminPanelBase extends Component{
         );
     };
 
+    changeArticleStatus = (postKey,stat) =>
+    {
+        if(stat == "open")
+        {
+            var articleRef = this.props.firebase.database.ref('posts/secrets/' + postKey);
+            articleRef.once('value', snapshot => {
+                if(snapshot.val())
+                {
+                    var updates = {};
+                    updates['/posts/opens/' + postKey] =  snapshot.val();
+                    updates['/posts/list/'+ postKey + "/status"] = "open";
+                    this.props.firebase.database.ref().update(updates, (error => {
+                        if (error) {
+                            alert("Bir Sorun Olustu " + error);
+                          } else {
+                            alert("Basariyla Duznelendi.");
+                          }
+                    }));
+                }
+                else{
+                    this.setState({articleBody:"Yazi Bulunamadi"});
+                }
+            });
+        }
+        if(stat == "secret")
+        {
+            var updates = {};
+            updates['/posts/opens/' + postKey] =  null;
+            updates['/posts/list/'+ postKey + "/status"] = "secret";
+            this.props.firebase.database.ref().update(updates, (error => {
+                if (error) {
+                    alert("Bir Sorun Olustu " + error);
+                    } else {
+                    alert("Basariyla Duznelendi.");
+                    }
+            }));
+        }
+    };
+
     render = () => 
     (
         <Container>
             <Row>
                 <Col sm={6}>
+                <h3>Yazi Listesi</h3>
+                <h4>Gosterilen Yazilar</h4>
+                <MDBListGroup >
+                    {this.state.articleList.map(item => {if( item.status == "open")
+                    
+                    return <MDBListGroupItem 
+                                style={{ height: "5rem" }} 
+                                className="d-flex justify-content-between align-items-center">
+                                <a href={"yazilar/" + item.postKey}>{item.title}</a> 
+                                <Button onClick={() => this.changeArticleStatus(item.postKey, "secret")}>Gizle</Button>
+                            </MDBListGroupItem>
+                            })}
+                </MDBListGroup>
+                <h4>Gizlenen Yazilar</h4>
+                <MDBListGroup >
+                    {this.state.articleList.map(item => {if( item.status == "secret")
+                     return <MDBListGroupItem 
+                                style={{ height: "3rem" }} 
+                                className="d-flex justify-content-between align-items-center">
+                                <a href={"yazilar/" + item.postKey}>{item.title}</a> 
+                                <Button onClick={() => this.changeArticleStatus(item.postKey, "open")}>Goster</Button>
+                            </MDBListGroupItem>
+                            })}
+                </MDBListGroup>
                 </Col>
                 <Col>
                 <h3>Yazar Listesi</h3>

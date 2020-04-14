@@ -89,14 +89,21 @@ class NewArticleBase extends Component{
         })
         let uid = slugify(this.state.header);
         // A post entry.
+
+        var newPostKey = firebase.database().ref().child('/posts/list/').push().key;
+
         var postData = {
             author: this.state.selectedWriter.value,
             body: this.state.editorData,
             title: this.state.header,
+            postKey: newPostKey,
         };
-        
-        // Get a key for a new Post.
-        this.props.firebase.database.ref('posts/secrets/' + uid).set(postData, (error => {
+
+        var updates = {};
+        updates['/posts/secrets/' + newPostKey] = postData;
+        updates['/posts/list/'+ newPostKey] = {status:"secret", title: this.state.header, postKey: newPostKey};
+
+        this.props.firebase.database.ref().update(updates, (error => {
             if (error) {
                 alert("Bir Sorun Olustu " + error);
                 this.setState({
@@ -108,17 +115,29 @@ class NewArticleBase extends Component{
               }
         }));
 
-        this.props.firebase.database.ref('posts/opens/' + uid).set(postData, (error => {
-            if (error) {
-                alert("Bir Sorun Olustu " + error);
-                this.setState({
-                    submitText: "Gonder",
-                });
-              } else {
-                alert("Basariyla Kaydedildi.");
-                this.setState({redirect: true});
-              }
-        }));
+        // this.props.firebase.database.ref('posts/secrets/' + uid).set(postData, (error => {
+        //     if (error) {
+        //         alert("Bir Sorun Olustu " + error);
+        //         this.setState({
+        //             submitText: "Gonder",
+        //         });
+        //       } else {
+        //         alert("Basariyla Kaydedildi.");
+        //         this.setState({redirect: true});
+        //       }
+        // }));
+
+        // this.props.firebase.database.ref('posts/opens/' + uid).set(postData, (error => {
+        //     if (error) {
+        //         alert("Bir Sorun Olustu " + error);
+        //         this.setState({
+        //             submitText: "Gonder",
+        //         });
+        //       } else {
+        //         alert("Basariyla Kaydedildi.");
+        //         this.setState({redirect: true});
+        //       }
+        // }));
     };
 
 
