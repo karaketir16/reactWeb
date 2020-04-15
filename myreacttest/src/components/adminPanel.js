@@ -118,6 +118,7 @@ class AdminPanelBase extends Component{
                 if(snapshot.val())
                 {
                     var updates = {};
+                    updates['/posts/secrets/' + postKey] = null;
                     updates['/posts/opens/' + postKey] =  snapshot.val();
                     updates['/posts/list/'+ postKey + "/status"] = "open";
                     this.props.firebase.database.ref().update(updates, (error => {
@@ -135,16 +136,26 @@ class AdminPanelBase extends Component{
         }
         if(stat == "secret")
         {
-            var updates = {};
-            updates['/posts/opens/' + postKey] =  null;
-            updates['/posts/list/'+ postKey + "/status"] = "secret";
-            this.props.firebase.database.ref().update(updates, (error => {
-                if (error) {
-                    alert("Bir Sorun Olustu " + error);
-                    } else {
-                    alert("Basariyla Duznelendi.");
-                    }
-            }));
+            var articleRef = this.props.firebase.database.ref('posts/opens/' + postKey);
+            articleRef.once('value', snapshot => {
+                if(snapshot.val())
+                {
+                    var updates = {};
+                    updates['/posts/opens/' + postKey] =  null;
+                    updates['/posts/secrets/' + postKey] =  snapshot.val();
+                    updates['/posts/list/'+ postKey + "/status"] = "secret";
+                    this.props.firebase.database.ref().update(updates, (error => {
+                        if (error) {
+                            alert("Bir Sorun Olustu " + error);
+                          } else {
+                            alert("Basariyla Duznelendi.");
+                          }
+                    }));
+                }
+                else{
+                    this.setState({articleBody:"Yazi Bulunamadi"});
+                }
+            });
         }
     };
 
