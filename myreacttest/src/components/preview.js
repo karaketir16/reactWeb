@@ -3,17 +3,17 @@ import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 import Container from 'react-bootstrap/Container';
+import { withFirebase } from './Firebase';
+import {connect} from "react-redux"
 
-class Preview extends Component{
+class PreviewBase extends Component{
 
-    constructor() 
-    {
-      super();
-      this.state = {
-        newTodo: "",
-        todos: [],
-        test: [<b>deneme</b>, <b>deneme</b>]
+    constructor(props) {
+        super(props);
+        this.state = {
+
       };
+      console.log("Title: ", this.state.title);
     };
 
 // style={{"font-size": "22px", "font-family": "Roboto", "color":""}}
@@ -43,29 +43,47 @@ class Preview extends Component{
     //         </div>
     //         </div>              
     // </Container>
-    render = () => 
-    (
+    render = () => {
+        let title = this.props.title;
+        let image = this.props.image;
+        let text = this.props.text;
+        let url  =  this.props.url;
+    return (
         <div className="card" style={{"margin": "30px 0px"}}>
             <div className="card-body">
-                <h5 className="card-title">Nam si amitti vita beata potest, beata esse non potest</h5>
+                <h5 className="card-title">{title}</h5>
                 <h6 className="card-subtitle mb-2 text-muted">Tarih 24 Aralık 2019</h6>
-                <img className="card-img-top" src="https://via.placeholder.com/1920x1080" alt="Card cap"/>
-                <p className="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                Aliter enim explicari, quod quaeritur, non potest. Quid enim est a Chrysippo 
-                praetermissum in Stoicis? Ex ea difficultate illae fallaciloquae, ut ait Accius,
-                 malitiae natae sunt. Estne, quaeso, inquam, sitienti in bibendo voluptas? 
-                 Quam tu ponis in verbis, ego positam in re putabam. Duo Reges: constructio 
-                 interrete. Tum Torquatus: Prorsus, inquit, assentior;</p>
+                <img className="card-img-top" src={image} alt="Card cap"/>
+                <p className="card-text">{text}</p>
                 <div className="text-right"> 
-                    <a href="#link" className="btn btn-dark">Yaziyi Oku ≫</a>
+                    <a href={url} className="btn btn-dark">Yaziyi Oku ≫</a>
                 </div>
             </div>
         </div>
 
-    );
+    )
+};
         
 }
 
-export default Preview;
+
+const mapStateToProps = (state) =>
+{
+    return {};
+};
+const mapDispatchToProps = (dispatch) =>
+{
+    return {};
+};
+
+const Preview = withFirebase(PreviewBase);
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Preview);
+
+
+
 
 

@@ -13,9 +13,10 @@ import { MDBInput } from "mdbreact";
 import Select from "react-select";
 import SunEditor,{buttonList} from "suneditor-react";
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
-
-
-
+import Preview from './preview';
+import DatePicker from "react-date-picker";
+import DayPickerInput from 'react-day-picker/DayPickerInput';
+import 'react-day-picker/lib/style.css';
 class NewArticleBase extends Component{
 
     constructor(props) {
@@ -33,6 +34,7 @@ class NewArticleBase extends Component{
             redirect: false,
             editorData: "",
             status: "secret",
+            date: new Date(),
         }; 
 
         var writersRef = this.props.firebase.database.ref('writers');
@@ -114,6 +116,15 @@ class NewArticleBase extends Component{
     {
         this.setState({header: event.target.value});
     };
+    imageChange = (event) =>
+    {
+        this.setState({image: event.target.value});
+    };
+    textChange = (event) =>
+    {
+        this.setState({text: event.target.value});
+    };
+    dateChange = date => this.setState({ date })
     selectionChange = (selectedWriter) =>
     {
         console.log("AuthorRRR: ", selectedWriter);
@@ -153,6 +164,7 @@ class NewArticleBase extends Component{
 
 
     render = () => {
+        
         if(this.state.redirect)
         {
             return (<Redirect to="/admin"/>);
@@ -161,10 +173,26 @@ class NewArticleBase extends Component{
             return     (
         <Container>
             <Row>
-                <Col xm={9}>
+                <Col sm={9}>
                 <MDBInput label="Yazinin Basligi" onChange={this.headerChange} value={this.state.header}/>
                 </Col>
-
+                <Col xm ={3} style={{"padding-top":"30px"}}>
+                <Select
+                    value={this.state.selectedWriter}
+                    onChange={this.selectionChange}
+                    options={this.state.writerList}
+                    placeholder={"Yazar Secin"}
+                />
+                </Col>
+            
+            </Row>
+            <Row>
+                <Col sm={9}>
+                <MDBInput label="Kapak Resmi Linki" onChange={this.imageChange} value={this.state.image}/>
+                </Col>
+                <Col xm ={3} style={{"padding-top":"30px"}}>
+                </Col>
+            
             </Row>
             <Row>
                 <Col sm={9}>
@@ -177,16 +205,23 @@ class NewArticleBase extends Component{
                     onChange={this.handleEditorDataChange} 
                     />
                 </Col>
-                <Col xm ={3} style={{"padding-top":"30px"}}>
-                <Select
-                    value={this.state.selectedWriter}
-                    onChange={this.selectionChange}
-                    options={this.state.writerList}
-                    placeholder={"Yazar Secin"}
-                />
+                <Col xm ={3}>
+                    <Row>
+                    <MDBInput onChange={this.textChange} style={{overflowY: "scroll"}}type="textarea" label="Tanitim Yazisi" rows="10" />
+                    </Row>
+                    <Row>
+                    <DayPickerInput onDayChange={day => console.log(day)} />
+                    </Row>
                 </Col>
             </Row>
+            <Row>
             <Button onClick={this.submit}>{this.state.submitText}</Button>
+            </Row>
+            <Row>
+                <Col sm={9}>
+                    <Preview title={this.state.header} image={this.state.image} text={this.state.text}/>
+                </Col>
+            </Row>
         </Container>
 
     )};
