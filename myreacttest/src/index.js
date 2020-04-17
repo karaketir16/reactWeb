@@ -7,6 +7,7 @@ import {Provider} from "react-redux"
 import {createStore} from "redux"
 import allReducers from "./reducers"
 import Firebase, { FirebaseContext } from './components/Firebase';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 
 const store = createStore(

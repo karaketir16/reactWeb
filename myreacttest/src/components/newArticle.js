@@ -17,6 +17,8 @@ import Preview from './preview';
 import DatePicker from "react-date-picker";
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
+
+
 class NewArticleBase extends Component{
 
     constructor(props) {
@@ -55,6 +57,8 @@ class NewArticleBase extends Component{
                 if(snapshot.val())
                 {
                     var status = snapshot.val().status;
+                    var status = snapshot.val().status;
+                    var status = snapshot.val().status;
                     this.setState({status});
                     var articleRef = this.props.firebase.database.ref('posts/' + status + 's/' + this.state.articleUid);
                     articleRef.once('value', snapshot => {
@@ -87,11 +91,7 @@ class NewArticleBase extends Component{
                     alert("Bir Sorun Olustu ");
                 }
             });
-
-
-
         }
-
     };
     
     // A handler executed when the user types or modifies the editor content.
@@ -147,7 +147,15 @@ class NewArticleBase extends Component{
 
         var updates = {};
         updates['/posts/' + this.state.status + 's/' + newPostKey] = postData;
-        updates['/posts/list/'+ newPostKey] = {status:this.state.status, title: this.state.header, postKey: newPostKey};
+        updates['/posts/list/'+ newPostKey] = {
+                                status:this.state.status, 
+                                title: this.state.header, 
+                                postKey: newPostKey,
+                                date: this.state.date,
+                                image: this.state.image,
+                                text: this.state.text,        
+                                author: this.state.selectedWriter ? this.state.selectedWriter.value : null,
+                            };
 
         this.props.firebase.database.ref().update(updates, (error => {
             if (error) {
@@ -210,7 +218,16 @@ class NewArticleBase extends Component{
                     <MDBInput onChange={this.textChange} style={{overflowY: "scroll"}}type="textarea" label="Tanitim Yazisi" rows="10" />
                     </Row>
                     <Row>
-                    <DayPickerInput onDayChange={day => console.log(day)} />
+                        Yazi Tarihi: {(this.state.date).toLocaleDateString("tr-TR", {
+                                                                                                year: 'numeric',
+                                                                                                month: 'long',
+                                                                                                day: 'numeric'
+                                                                                                } )//.replace( / /g, '-' )
+                                                                                                }
+
+                    </Row>
+                    <Row>
+                        <DayPickerInput value={this.state.date} onDayChange={date => this.setState({date})} />
                     </Row>
                 </Col>
             </Row>
@@ -219,7 +236,11 @@ class NewArticleBase extends Component{
             </Row>
             <Row>
                 <Col sm={9}>
-                    <Preview title={this.state.header} image={this.state.image} text={this.state.text}/>
+                    <Preview    title={this.state.header} 
+                                image={this.state.image} 
+                                text={this.state.text}
+                                date = {this.state.date}
+                                />
                 </Col>
             </Row>
         </Container>

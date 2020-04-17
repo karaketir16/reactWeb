@@ -48,12 +48,13 @@ class PreviewBase extends Component{
         let image = this.props.image;
         let text = this.props.text;
         let url  =  this.props.url;
+        let date  =  this.props.date;
     return (
         <div className="card" style={{"margin": "30px 0px"}}>
-            <div className="card-body">
+                <div className="card-body">
                 <h5 className="card-title">{title}</h5>
-                <h6 className="card-subtitle mb-2 text-muted">Tarih 24 Aralık 2019</h6>
-                <img className="card-img-top" src={image} alt="Card cap"/>
+                <h6 className="card-subtitle mb-2 text-muted">Tarih {date ? date.toLocaleDateString("tr-TR", { year: 'numeric', month: 'long', day: 'numeric' } ) : "-"}</h6>
+                <img className="card-img-top" src={image} alt="Resim"/>
                 <p className="card-text">{text}</p>
                 <div className="text-right"> 
                     <a href={url} className="btn btn-dark">Yaziyi Oku ≫</a>
@@ -82,8 +83,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
   )(Preview);
-
-
-
-
-

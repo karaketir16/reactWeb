@@ -4,6 +4,7 @@ import MyCarousel from "./myCarousel"
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+
 import Image from 'react-bootstrap/Image'
 import MyNavbar from './myNavbar'
 import Button from 'react-bootstrap/Button'
@@ -16,9 +17,15 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { withFirebase } from './Firebase';
 import firebase from 'firebase'
 
+import { Pagination } from 'semantic-ui-react'
+import 'semantic-ui-css/semantic.min.css'
+
+
+
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
 import LoginComp from "./loginComp";
+
 
 class MainPageBase extends Component{
 
@@ -26,6 +33,7 @@ class MainPageBase extends Component{
         super(props);
       this.state = {
         user: this.props.user,
+        activePage: 15,
       }; 
       this.props.firebase.auth.onAuthStateChanged((user) => {
           this.setState(
@@ -34,6 +42,11 @@ class MainPageBase extends Component{
           this.props.loginAction(user)
       });
     };
+
+    handlePageChange(pageNumber) {
+        console.log(`active page is ${pageNumber}`);
+        this.setState({activePage: pageNumber});
+    }
     
     render = () => 
     (
@@ -59,6 +72,7 @@ class MainPageBase extends Component{
                     In quis sagittis nibh. Donec non convallis mi. Sed bibendum velit volutpat, varius ipsum in, consectetur magna. Mauris eros nunc, tristique lobortis maximus vitae, venenatis vel augue. Pellentesque quis ullamcorper nibh, vitae feugiat lorem. Nulla vitae consectetur ligula, ac porttitor felis. Fusce rutrum tincidunt urna eu cursus. Interdum et malesuada fames ac ante ipsum primis in faucibus. In facilisis gravida tristique. Morbi gravida sem quis nibh fermentum, eget vulputate velit lacinia. Mauris sodales urna eu nulla ultrices, non volutpat velit congue. Quisque non eros vitae mauris mattis porta eget at ante. Nulla eget leo ex. Suspendisse ultrices vitae purus vel tincidunt.\
                     "/>
                     <Preview />
+                    <Pagination defaultActivePage={5} totalPages={10} />
                 </Col>
                 <Col>
                     <LoginComp/>
