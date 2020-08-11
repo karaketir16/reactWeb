@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {BrowserRouter as Router, Route, Redirect} from "react-router-dom"
+import {BrowserRouter as Redirect} from "react-router-dom"
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -14,7 +14,6 @@ import Select from "react-select";
 import SunEditor,{buttonList} from "suneditor-react";
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import Preview from './preview';
-import DatePicker from "react-date-picker";
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 
@@ -57,16 +56,21 @@ class NewArticleBase extends Component{
                 if(snapshot.val())
                 {
                     var status = snapshot.val().status;
-                    var status = snapshot.val().status;
-                    var status = snapshot.val().status;
+                    var image = snapshot.val().image;
+                    var date = snapshot.val().date;
+                    var text = snapshot.val().text;
                     this.setState({status});
+                    this.setState({image});
+                    this.setState({date: new Date(date)});
+                    this.setState({text});
                     var articleRef = this.props.firebase.database.ref('posts/' + status + 's/' + this.state.articleUid);
                     articleRef.once('value', snapshot => {
                         if(snapshot.val())
                         {
-                            this.setState({editorData:snapshot.val().body,
+                            this.setState({defaultEditorData:snapshot.val().body,
                                             header: snapshot.val().title,
                                         });
+                            console.log("Defeddat:", this.state.defaultEditorData)
                             var writerUid = snapshot.val().author;
                             var writerRef = this.props.firebase.database.ref('writers/' + writerUid);
                             writerRef.once('value', snapshot => {
@@ -151,7 +155,7 @@ class NewArticleBase extends Component{
                                 status:this.state.status, 
                                 title: this.state.header, 
                                 postKey: newPostKey,
-                                date: this.state.date,
+                                date: this.state.date.getTime(),
                                 image: this.state.image,
                                 text: this.state.text,        
                                 author: this.state.selectedWriter ? this.state.selectedWriter.value : null,
@@ -209,13 +213,13 @@ class NewArticleBase extends Component{
                         buttonList: buttonList.complex // Or Array of button list, eg. [['font', 'align'], ['image']]
                         // Other option
                     }}
-                    setContents={this.state.editorData}
+                    setContents={this.state.defaultEditorData}
                     onChange={this.handleEditorDataChange} 
                     />
                 </Col>
                 <Col xm ={3}>
                     <Row>
-                    <MDBInput onChange={this.textChange} style={{overflowY: "scroll"}}type="textarea" label="Tanitim Yazisi" rows="10" />
+                    <MDBInput value={this.state.text} onChange={this.textChange} style={{overflowY: "scroll"}}type="textarea" label="Tanitim Yazisi" rows="10" />
                     </Row>
                     <Row>
                         Yazi Tarihi: {(this.state.date).toLocaleDateString("tr-TR", {
@@ -240,6 +244,7 @@ class NewArticleBase extends Component{
                                 image={this.state.image} 
                                 text={this.state.text}
                                 date = {this.state.date}
+                                author = {this.state.selectedWriter ? this.state.selectedWriter.label : undefined}
                                 />
                 </Col>
             </Row>

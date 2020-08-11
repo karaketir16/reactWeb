@@ -1,30 +1,21 @@
 import React, { Component } from 'react';
-import {BrowserRouter as Router, Route} from "react-router-dom"
 import MyCarousel from "./myCarousel"
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-
 import Image from 'react-bootstrap/Image'
 import MyNavbar from './myNavbar'
-import Button from 'react-bootstrap/Button'
 import Preview from './preview'
 import {connect} from "react-redux"
 import {loginAction} from "../actions"
-import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
-import { Editor} from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { withFirebase } from './Firebase';
-import firebase from 'firebase'
-
 import { Pagination } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
-
-
-
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-
 import LoginComp from "./loginComp";
+
+
+const PERPAGE = 2;
 
 
 class MainPageBase extends Component{
@@ -33,7 +24,9 @@ class MainPageBase extends Component{
         super(props);
       this.state = {
         user: this.props.user,
-        activePage: 15,
+        articleList : [],
+        activePage: 1,
+        writers: {},
       }; 
       this.props.firebase.auth.onAuthStateChanged((user) => {
           this.setState(
@@ -41,26 +34,67 @@ class MainPageBase extends Component{
           );
           this.props.loginAction(user)
       });
+
+
+      var articleListRef = this.props.firebase.database.ref('posts/list');
+      articleListRef.on('value', snapshot => {
+          let tmp = [];
+          for(const article in snapshot.val())
+          {
+                if("open" === snapshot.val()[article].status)
+                    tmp.push(snapshot.val()[article]);
+          }
+
+          tmp.sort((a,b)=>
+          {
+              
+            let x = b.date - a.date;
+            console.log(a,b,"X:",x);
+            return x;
+          });
+
+          this.setState({articleList: tmp});
+      });
+
+      var writersRef = this.props.firebase.database.ref('writers');
+      writersRef.on('value', snapshot => {
+          this.setState({writers: snapshot.val()});
+      });
+
     };
 
-    handlePageChange(pageNumber) {
-        console.log(`active page is ${pageNumber}`);
-        this.setState({activePage: pageNumber});
-    }
+    handlePageChange = (e, {activePage}) => {
+        this.setState({activePage});
+    };
+
+    sliceArr = () => {
+
+    let sliced = this.state.articleList.slice((this.state.activePage-1)*PERPAGE, (this.state.activePage)*PERPAGE);
+    // console.log("articleList:", this.state.)
+    console.log("sliced:", sliced);
     
-    render = () => 
+    return sliced.map( article => {
+            let aWriter = (article.author ? (this.state.writers[article.author] ? this.state.writers[article.author].name : undefined) : undefined);
+            return (
+                <Preview image={article.image} title={article.title} text={article.text} 
+                date={new Date(article.date)} 
+                author={aWriter}
+                url={"yazilar/" + article.postKey}/>
+            );
+        });
+    };
+    
+    render = () => //className="px-0">
     (
-        <Container>
+        <Container >
             <Row>
                 <Col xs={12} className="px-0">
                     <Image src="https://via.placeholder.com/1920x300" fluid />
                 </Col>
             </Row>
-            <Row>
-                <Col xs={12} className="px-0">
-                    <MyNavbar />
-                </Col>
-            </Row>
+
+            <MyNavbar />
+            
             <Row>
                 <Col sm={12} className="px-0">
                     <MyCarousel />
@@ -68,11 +102,8 @@ class MainPageBase extends Component{
             </Row>
             <Row>
                 <Col sm={9} className="px-0">
-                    <Preview image="https://via.placeholder.com/1920x1080" title="Test Basligi" text="\
-                    In quis sagittis nibh. Donec non convallis mi. Sed bibendum velit volutpat, varius ipsum in, consectetur magna. Mauris eros nunc, tristique lobortis maximus vitae, venenatis vel augue. Pellentesque quis ullamcorper nibh, vitae feugiat lorem. Nulla vitae consectetur ligula, ac porttitor felis. Fusce rutrum tincidunt urna eu cursus. Interdum et malesuada fames ac ante ipsum primis in faucibus. In facilisis gravida tristique. Morbi gravida sem quis nibh fermentum, eget vulputate velit lacinia. Mauris sodales urna eu nulla ultrices, non volutpat velit congue. Quisque non eros vitae mauris mattis porta eget at ante. Nulla eget leo ex. Suspendisse ultrices vitae purus vel tincidunt.\
-                    "/>
-                    <Preview />
-                    <Pagination defaultActivePage={5} totalPages={10} />
+                    {this.sliceArr()}
+                    <Pagination defaultActivePage={1} totalPages={Math.ceil(this.state.articleList.length/PERPAGE)} onPageChange={ this.handlePageChange }/>
                 </Col>
                 <Col>
                     <LoginComp/>

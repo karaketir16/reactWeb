@@ -1,23 +1,13 @@
 import React, { Component } from 'react';
-import {BrowserRouter as Router, Route} from "react-router-dom"
-import MyCarousel from "./myCarousel"
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import Image from 'react-bootstrap/Image'
-import MyNavbar from './myNavbar'
 import Button from 'react-bootstrap/Button'
-import Preview from './preview'
 import {connect} from "react-redux"
 import {loginAction} from "../actions"
-import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
-import { Editor} from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { withFirebase } from './Firebase';
-import firebase from 'firebase'
-
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import {MDBInput, MDBListGroup, MDBListGroupItem, MDBContainer, MDBBadge } from "mdbreact";
+import {MDBInput, MDBListGroup, MDBListGroupItem} from "mdbreact";
 
 
 
@@ -111,9 +101,9 @@ class AdminPanelBase extends Component{
 
     changeArticleStatus = (postKey,stat) =>
     {
-        if(stat == "open")
+        if(stat === "open")
         {
-            var articleRef = this.props.firebase.database.ref('posts/secrets/' + postKey);
+            let articleRef = this.props.firebase.database.ref('posts/secrets/' + postKey);
             articleRef.once('value', snapshot => {
                 if(snapshot.val())
                 {
@@ -134,9 +124,9 @@ class AdminPanelBase extends Component{
                 }
             });
         }
-        if(stat == "secret")
+        if(stat === "secret")
         {
-            var articleRef = this.props.firebase.database.ref('posts/opens/' + postKey);
+            let articleRef = this.props.firebase.database.ref('posts/opens/' + postKey);
             articleRef.once('value', snapshot => {
                 if(snapshot.val())
                 {
@@ -167,25 +157,31 @@ class AdminPanelBase extends Component{
                 <h3>Yazi Listesi</h3>
                 <h4>Gosterilen Yazilar</h4>
                 <MDBListGroup >
-                    {this.state.articleList.map(item => {if( item.status == "open")
-                    
-                    return <MDBListGroupItem 
+                    {this.state.articleList.map(item => {
+                    if( item.status === "open")
+                        return <MDBListGroupItem 
                                 style={{ height: "5rem" }} 
                                 className="d-flex justify-content-between align-items-center">
                                 <a href={"yazilar/" + item.postKey}>{item.title}</a> 
                                 <Button onClick={() => this.changeArticleStatus(item.postKey, "secret")}>Gizle</Button>
                             </MDBListGroupItem>
+                    else 
+                        return null;
                             })}
+                    
                 </MDBListGroup>
                 <h4>Gizlenen Yazilar</h4>
                 <MDBListGroup >
-                    {this.state.articleList.map(item => {if( item.status == "secret")
-                     return <MDBListGroupItem 
+                    {this.state.articleList.map(item => {
+                        if( item.status === "secret")
+                            return <MDBListGroupItem 
                                 style={{ height: "3rem" }} 
                                 className="d-flex justify-content-between align-items-center">
                                 <a href={"yazilar/" + item.postKey}>{item.title}</a> 
                                 <Button onClick={() => this.changeArticleStatus(item.postKey, "open")}>Goster</Button>
                             </MDBListGroupItem>
+                        else
+                            return null;
                             })}
                 </MDBListGroup>
                 </Col>

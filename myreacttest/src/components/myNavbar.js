@@ -18,8 +18,8 @@ class MyNavbar extends Component{
 
     render = () => 
     (
-        <Navbar id="navbar" collapseOnSelect expand="lg" bg="primary" variant="dark">
-        <Navbar.Brand href="#home">Genç Adam</Navbar.Brand>
+        <Navbar id="navbar" collapseOnSelect expand="lg" bg="primary" variant="dark" sticky="top" style={{marginRight: "-15px", marginLeft: "-15px"}}>
+        <Navbar.Brand href="/">Genç Adam</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">

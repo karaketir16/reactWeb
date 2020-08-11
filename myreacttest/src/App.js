@@ -36,7 +36,7 @@ class App extends Component{
       <Route path='/' exact component={MainPage}/>
       <Route path='/admin' component={AdminPanel}/>
       <Route path='/yeni-yazi' component={NewArticle}/>
-      <Route path='/:articleUid/duzenle' component={NewArticle}/>
+      <Route path='/duzenle/:articleUid' component={NewArticle}/>
       <Route path='/yazilar/:articleName' component={ArticlePage}/>
       <Route path='/test' component={newEditor}/>
     </Router>
